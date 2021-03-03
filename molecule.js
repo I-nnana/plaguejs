@@ -1,7 +1,7 @@
 class Molecules {
     // the constructor determines the vectors position/velocity of each balls, their min/max radiuses, colour and indexes
     // that is passed by the draw() function
-    constructor() {
+    constructor({}) {
         this.position = createVector(200, 200);
         this.velocity = createVector(random(-1, 1), random(-1, 1));
         this.radius = random(obj.minMoleculeSize, obj.maxMoleculeSize);
@@ -95,8 +95,6 @@ class Molecules {
             ((this.attribute === "healthy") ? id = this.index :  id = _molecule.index)
         : null;
         
-        // (this.index == 0 || _molecule.index == 0) ? console.log("hit") : null;
-
         return id;
     }
 

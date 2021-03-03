@@ -16,7 +16,7 @@ function setup() {
     // molecules will store x amount of molecules determinded by numOfMolecules in gui.js
     for (let i = 0; i < obj.numOfMolecules; i++) {
         let randNum = random();
-        (percentOfInfected > randNum) ? molecules.push(new Infected(i)) : molecules.push(new Healthy(i));
+        (randNum < percentOfInfected) ? molecules.push(new Infected(i)) : molecules.push(new Healthy(i));
     }
 
     gridify();
@@ -103,23 +103,20 @@ function checkIntersections(_collection) {
 }
 
 function infected(_index){
-    if (_index){
+    if (_index || _index ==0){
 
-        (_index == 1) ? console.log("hit") : null;
-        
-        let moleculeA = molecules[_index];
-        // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`)
-        
-        let moleculeB = new Infection(moleculeA.index, moleculeA.position, moleculeA.velocity);
-        // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
+            let moleculeA = molecules[_index];
+            // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`)
+            
+            let moleculeB = new Infection(moleculeA.index, moleculeA.position, moleculeA.velocity, moleculeA.radius );
+            // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
 
-        molecules.splice(_index, 1, moleculeB);
-    }
+            let probabilityOfInfection = 0.50;
+            let randNum = random();
+            (randNum <= probabilityOfInfection ) ?  molecules.splice(_index, 1, moleculeB) : null;
+           
+        }
 }
-
-
-// (percentOfInfected > randNum) ? molecules.push(new Infected(i)) : molecules.push(new Healthy(i));
-
 
 // The function splitObjectIntoGrid creates for each iteration an array moleculeCollection that is sent to checkIntersections().
 // for each draw() iteration, splitObjectIntoGrid will iterate for n times, determined x the numRows.

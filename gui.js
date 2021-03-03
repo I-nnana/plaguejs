@@ -1,13 +1,13 @@
 let obj = {
-    numOfMolecules: 10,
+    numOfMolecules: 100,
     numRows: 1,
     numCols: 1,
-    showText: true,
+    showText: false,
     loopState: true,
     gridState: false,
     lineState: false,
-    minMoleculeSize: 40,
-    maxMoleculeSize: 40
+    minMoleculeSize: 4,
+    maxMoleculeSize: 12
 };
 
 var gui = new dat.gui.GUI();
