@@ -1,10 +1,10 @@
 let obj = {
     numOfMolecules: 100,
-    numRows: 1,
-    numCols: 1,
+    numRows: 7,
+    numCols: 7,
     showText: false,
     loopState: true,
-    gridState: false,
+    gridState: true,
     lineState: false,
     minMoleculeSize: 4,
     maxMoleculeSize: 12

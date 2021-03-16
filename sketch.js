@@ -77,7 +77,6 @@ function checkIntersectionsOld() {
 // Whether or not lineState returns true or false, the script will draw the grid on the canvas
 
 function checkIntersections(_collection) {
-
     let index;
 
     for (let a = 0; a < _collection.length; a++) {
@@ -130,14 +129,32 @@ function splitObjectIntoGrid() {
     for (let j = 0; j < obj.numRows; j++) {
         for (let i = 0; i < obj.numCols; i++) {
 
-            let moleculeCollection = molecules.filter(molecule =>
+            let oneOnOneSquare = molecules.filter(molecule =>
                 molecule.position.x > (i * colWidth) &&
                 molecule.position.x < ((i + 1) * colWidth) &&
                 molecule.position.y > j * rowHeight &&
-                molecule.position.y < (j + 1) * rowHeight
+                molecule.position.y < (j + 1) * rowHeight 
             ).map(molecule => molecule.index);
+            // console.log(`1x1 square: ${oneOnOneSquare}`);
 
-            checkIntersections(moleculeCollection);
+            let twoOnOneSquare = molecules.filter(molecule =>
+                molecule.position.x > ((i - 1) * colWidth) &&
+                molecule.position.x < ((i + 1) * colWidth) &&
+                molecule.position.y > ((j - 1) * rowHeight) &&
+                molecule.position.y < (j) * rowHeight
+            ).map(molecule => molecule.index);
+            // console.log(`2x1 square: ${twoOnOneSquare}`);
+
+            let oneOnTwoSquare = molecules.filter(molecule =>
+                molecule.position.x > ((i - 1) * colWidth) &&
+                molecule.position.x < ((i) * colWidth) &&
+                molecule.position.y > ((j) * rowHeight) &&
+                molecule.position.y < ((j + 2) * rowHeight)
+            ).map(molecule => molecule.index);
+            // console.log(`1x2 square: ${oneOnTwoSquare}`);
+
+            let moleculeCheck = [...oneOnOneSquare, ...twoOnOneSquare, ...oneOnTwoSquare];
+            checkIntersections(moleculeCheck);
         }
     }
     // console.timeEnd("new method:");
