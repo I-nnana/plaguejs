@@ -3,9 +3,9 @@ class Molecules {
     // that is passed by the draw() function
     constructor({}) {
         this.position = createVector(200, 200);
-        this.velocity = createVector(random(-1, 1), random(-1, 1));
+        this.velocity = createVector(random(-0.25, 0.25), random(-0.25, 0.25));
         this.radius = random(obj.minMoleculeSize, obj.maxMoleculeSize);
-        this.intersectingColor = color(100, 0, 255);
+        this.intersectingColor = color(50, 0, 255);
     }
 
     // render() is the function that draws the molecules in the canvas, with no stroke, a certain coulour (see gui.js), molecules figure

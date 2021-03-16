@@ -3,11 +3,11 @@ let obj = {
     numRows: 7,
     numCols: 7,
     showText: false,
-    loopState: true,
+    loopState: false,
     gridState: true,
-    lineState: false,
-    minMoleculeSize: 4,
-    maxMoleculeSize: 12
+    lineState: true,
+    minMoleculeSize: 15,
+    maxMoleculeSize: 15
 };
 
 var gui = new dat.gui.GUI();

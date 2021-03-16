@@ -25,7 +25,7 @@ function setup() {
 
 function draw() {
     // background() determines the canvas backgroung colour
-    background(255);
+    background(33,33,33);
 
     // reset() is a function from molecule's class, that draws the molecules with their orignal colour 
     // once they are nomore intersecting with another molecule
@@ -76,19 +76,27 @@ function checkIntersectionsOld() {
 // If the molecules are intersecting, then the molecules render a new colour determined by the function changeColor() or the molecule class
 // Whether or not lineState returns true or false, the script will draw the grid on the canvas
 
-function checkIntersections(_collection) {
+function checkIntersections(_collection, _oneOnOneSquare) {
     let index;
+
+    for (let a = 0; a < _oneOnOneSquare.length; a++) {
+        for (let b = a + 1; b < _oneOnOneSquare.length; b++) {
+
+            let moleculeA = molecules[_collection[a]];
+            let moleculeB = molecules[_collection[b]];
+
+            if (obj.lineState) {
+                stroke(200, 200, 200);
+                line(moleculeA.position.x, moleculeA.position.y, moleculeB.position.x, moleculeB.position.y);
+            };
+        }
+    }
 
     for (let a = 0; a < _collection.length; a++) {
         for (let b = a + 1; b < _collection.length; b++) {
 
             let moleculeA = molecules[_collection[a]];
             let moleculeB = molecules[_collection[b]];
-
-            if (obj.lineState) {
-                stroke(125, 100);
-                line(moleculeA.position.x, moleculeA.position.y, moleculeB.position.x, moleculeB.position.y);
-            };
 
             moleculeA.isIntersecting(moleculeB) ? (
                 moleculeA.changeColor(), 
@@ -98,6 +106,9 @@ function checkIntersections(_collection) {
             ) : null;
         }
     }
+
+
+    
 
 }
 
@@ -138,23 +149,23 @@ function splitObjectIntoGrid() {
             // console.log(`1x1 square: ${oneOnOneSquare}`);
 
             let twoOnOneSquare = molecules.filter(molecule =>
-                molecule.position.x > ((i - 1) * colWidth) &&
-                molecule.position.x < ((i + 1) * colWidth) &&
-                molecule.position.y > ((j - 1) * rowHeight) &&
+                molecule.position.x > ((i - 0.5) * colWidth) &&
+                molecule.position.x < ((i + 0.5) * colWidth) &&
+                molecule.position.y > ((j - 0.5) * rowHeight) &&
                 molecule.position.y < (j) * rowHeight
             ).map(molecule => molecule.index);
             // console.log(`2x1 square: ${twoOnOneSquare}`);
 
             let oneOnTwoSquare = molecules.filter(molecule =>
-                molecule.position.x > ((i - 1) * colWidth) &&
+                molecule.position.x > ((i - 0.5) * colWidth) &&
                 molecule.position.x < ((i) * colWidth) &&
                 molecule.position.y > ((j) * rowHeight) &&
-                molecule.position.y < ((j + 2) * rowHeight)
+                molecule.position.y < ((j + 1.5) * rowHeight)
             ).map(molecule => molecule.index);
             // console.log(`1x2 square: ${oneOnTwoSquare}`);
 
             let moleculeCheck = [...oneOnOneSquare, ...twoOnOneSquare, ...oneOnTwoSquare];
-            checkIntersections(moleculeCheck);
+            checkIntersections(moleculeCheck, oneOnOneSquare);
         }
     }
     // console.timeEnd("new method:");
