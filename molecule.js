@@ -112,13 +112,15 @@ class Molecules {
     //  however, if a molecule's position exceeds the result of the canvas's width malus the radius (or is below radius malus 1),
     //  then the molecule is out the canvas the boundaries. If so, step() reposition the ball to be in the canvas before switching the velocity's direction.
     step() {
+        let heightLimit = (height * (100  - obj.dashboardHeight) / 100);
+
         (this.position.x > width - this.radius) ? (this.position.x = width - this.radius) :
         (this.position.x < this.radius - 1) ? (this.position.x = this.radius) : 
-        (this.position.y > height - this.radius) ? (this.position.y = height - this.radius) : 
+        (this.position.y > heightLimit - this.radius) ? (this.position.y = heightLimit - this.radius) : 
         (this.position.y < this.radius - 1) ? (this.position.y = this.radius) : null ;
 
         (this.position.x >= width - this.radius || this.position.x <= 0 + this.radius) ? this.velocity.x *= -1: null;
-        (this.position.y >= height - this.radius || this.position.y <= 0 + this.radius) ? this.velocity.y *= -1: null;
+        (this.position.y >= heightLimit - this.radius || this.position.y <= 0 + this.radius) ? this.velocity.y *= -1: null;
 
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;

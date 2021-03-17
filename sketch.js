@@ -8,7 +8,7 @@ function setup() {
 
     //  columns width & height are determined by the canvas width & height divided by the number x of columns and y of rows
     colWidth = width / obj.numCols;
-    rowHeight = height / obj.numRows;
+    rowHeight = (height * (100 - obj.dashboardHeight) / 100) / obj.numRows;
 
     // each time setup is called, molecules is clear to accept a new array of n molecules
     molecules = [];
@@ -26,6 +26,8 @@ function setup() {
 function draw() {
     // background() determines the canvas backgroung colour
     background(33,33,33);
+
+    dashboard();
 
     // reset() is a function from molecule's class, that draws the molecules with their orignal colour 
     // once they are nomore intersecting with another molecule
@@ -47,6 +49,17 @@ function draw() {
     });
     // console.log(frameRate());
 }
+
+
+/* DASHBOARD */
+
+function dashboard(){
+    let dashboard = new Dashboard(width, height);
+}
+
+/* END DASHBOARD */
+
+
 
 // The Function checkIntersectionsOld() checks whether of molecules are interecting regardless is they are sharing a cell or not
 // using nested for loop using moleculeA and moleculeB storing a molecules object via molecules[a/b].*
@@ -76,11 +89,11 @@ function checkIntersectionsOld() {
 // If the molecules are intersecting, then the molecules render a new colour determined by the function changeColor() or the molecule class
 // Whether or not lineState returns true or false, the script will draw the grid on the canvas
 
-function checkIntersections(_collection, _oneOnOneSquare) {
+function checkIntersections(_collection, _oneByOneSquare) {
     let index;
 
-    for (let a = 0; a < _oneOnOneSquare.length; a++) {
-        for (let b = a + 1; b < _oneOnOneSquare.length; b++) {
+    for (let a = 0; a < _oneByOneSquare.length; a++) {
+        for (let b = a + 1; b < _oneByOneSquare.length; b++) {
 
             let moleculeA = molecules[_collection[a]];
             let moleculeB = molecules[_collection[b]];
@@ -125,7 +138,7 @@ function infected(_index){
         }
 }
 
-// The function splitObjectIntoGrid creates for each iteration an array moleculeCheck & oneOnOneSquare that are sent to checkIntersections().
+// The function splitObjectIntoGrid creates for each iteration an array moleculeCheck & oneByOneSquare that are sent to checkIntersections().
 // for each draw() iteration, splitObjectIntoGrid will iterate for n times, determined x the numRows.
 // Each array holds a number n of molecules within a given square. The script will then check whether the molecules intersect.
 // To check whether a given molecule is intersecting another one outside of its square, the script checks in an area of shape L and distance half less than a block,
@@ -137,37 +150,38 @@ function splitObjectIntoGrid() {
     for (let j = 0; j < obj.numRows; j++) {
         for (let i = 0; i < obj.numCols; i++) {
 
-            let oneOnOneSquare = molecules.filter(molecule =>
+            let oneByOneSquare = molecules.filter(molecule =>
                 molecule.position.x > (i * colWidth) &&
                 molecule.position.x < ((i + 1) * colWidth) &&
                 molecule.position.y > j * rowHeight &&
                 molecule.position.y < (j + 1) * rowHeight 
             ).map(molecule => molecule.index);
-            // console.log(`1x1 square: ${oneOnOneSquare}`);
+            // console.log(`1x1 square: ${oneByOneSquare}`);
 
             let twoByOneSquare = molecules.filter(molecule =>
-                molecule.position.x > ((i - 0.5) * colWidth) &&
+                molecule.position.x > ((i - 0.30) * colWidth) &&
                 molecule.position.x < ((i + 1) * colWidth) &&
-                molecule.position.y > ((j - 0.5) * rowHeight) &&
+                molecule.position.y > ((j - 0.30) * rowHeight) &&
                 molecule.position.y < (j) * rowHeight
             ).map(molecule => molecule.index);
             // console.log(`2x1 square: ${twoByOneSquare}`);
 
             let oneByTwoSquare = molecules.filter(molecule =>
-                molecule.position.x > ((i - 0.5) * colWidth) &&
+                molecule.position.x > ((i - 0.30) * colWidth) &&
                 molecule.position.x < ((i) * colWidth) &&
                 molecule.position.y > ((j) * rowHeight) &&
-                molecule.position.y < ((j + 1.5) * rowHeight)
+                molecule.position.y < ((j + 1.30) * rowHeight)
             ).map(molecule => molecule.index);
             // console.log(`1x2 square: ${oneByTwoSquare}`);
 
-            let moleculeCheck = [...oneOnOneSquare, ...twoByOneSquare, ...oneByTwoSquare];
-            checkIntersections(moleculeCheck, oneOnOneSquare);
+            let moleculeCheck = [...oneByOneSquare, ...twoByOneSquare, ...oneByTwoSquare];
+            checkIntersections(moleculeCheck, oneByOneSquare);
         }
     }
     // console.timeEnd("new method:");
-
 }
+
+
 // The function gridify() ensures that each molecules original position aren't overlapping with one to another.
 // numDivision is calculated by ceiling the square root of numOfMolecules and spacing is the product
 // of the canvas width (-40px) divided by the former variable. Each molecule is given a x & y position.
@@ -177,12 +191,12 @@ function splitObjectIntoGrid() {
 
 function gridify() {
     let numDivision = ceil(Math.sqrt(obj.numOfMolecules));
-    let spacing = (width ) / numDivision;
+    let spacing = (width) / numDivision;
 
     molecules.forEach((molecule, index) => {
 
         let colPos = (index % numDivision) * spacing;
-        let rowPos = floor(index / numDivision) * spacing;
+        let rowPos = floor(index / numDivision) * (spacing * (100 - obj.dashboardHeight) / 100);
         //console.log(`The col pos ${colPos} and the row pos ${rowPos}`);
         molecule.position.x = colPos + obj.maxMoleculeSize;
         molecule.position.y = rowPos + obj.maxMoleculeSize;
@@ -202,7 +216,6 @@ function drawGrid() {
 
     for (let j = 0; j < obj.numRows; j++) {
         for (let i = 0; i < obj.numCols; i++) {
-            //
             rect(i * colWidth, j * rowHeight, colWidth, rowHeight)
         }
     }

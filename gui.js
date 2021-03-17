@@ -1,4 +1,5 @@
 let obj = {
+    dashboardHeight: 30,
     numOfMolecules: 100,
     numRows: 7,
     numCols: 7,
@@ -15,6 +16,10 @@ var gui = new dat.gui.GUI();
 gui.remember(obj);
 
 section01 = gui.addFolder('Layout');
+section01.add(obj, 'dashboardHeight').min(0).max(50).step(5).onChange(function() {
+    setup();
+    draw();
+});
 section01.add(obj, 'numOfMolecules').min(0).max(1000).step(1).onChange(function() {
     setup();
     draw();
