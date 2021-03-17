@@ -3,7 +3,7 @@ class Molecules {
     // that is passed by the draw() function
     constructor({}) {
         this.position = createVector(200, 200);
-        this.velocity = createVector(random(-0.25, 0.25), random(-0.25, 0.25));
+        this.velocity = createVector(random(-1, 1), random(-1, 1));
         this.radius = random(obj.minMoleculeSize, obj.maxMoleculeSize);
         this.intersectingColor = color(50, 0, 255);
     }
@@ -16,8 +16,8 @@ class Molecules {
         ellipse(this.position.x, this.position.y, this.radius * 2, this.radius * 2);
         fill(0);
         (obj.showText) ? (
-            textSize(16),
-            textAlign(CENTER),
+            textSize(10),
+            textAlign(CENTER ),
             text(this.index, this.position.x, this.position.y + 6)) : null;
     }
 
@@ -60,7 +60,7 @@ class Molecules {
 
         _molecule.position.x += moveX;
         _molecule.position.y += moveY;
-}
+    }
 
     bounce(_molecule, _distance){
         // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
@@ -93,7 +93,7 @@ class Molecules {
         let id;        
         (this.attribute === "healthy" &&  _molecule.attribute === "infected" || this.attribute === "infected" &&  _molecule.attribute === "healthy") ? 
             ((this.attribute === "healthy") ? id = this.index :  id = _molecule.index)
-        : null;
+            : null;
         
         return id;
     }
@@ -108,15 +108,17 @@ class Molecules {
         this.currentColor = this.fillColor
     }
 
-    //The step( ) function 'moves' the molecules in the canvas by taking the x & y vector positions and adding the velocity vectors
-    // if they hit a border, the product of velocity by -1 reverses their direction
+    //  step() switches the direction a molecules is heading to if it hits the borders of the canvas.
+    //  however, if a molecule's position exceeds the result of the canvas's width malus the radius (or is below radius malus 1),
+    //  then the molecule is out the canvas the boundaries. If so, step() reposition the ball to be in the canvas before switching the velocity's direction.
     step() {
+        (this.position.x > width - this.radius) ? (this.position.x = width - this.radius) :
+        (this.position.x < this.radius - 1) ? (this.position.x = this.radius) : 
+        (this.position.y > height - this.radius) ? (this.position.y = height - this.radius) : 
+        (this.position.y < this.radius - 1) ? (this.position.y = this.radius) : null ;
 
-        (this.position.x > width - this.radius || this.position.x < 0 + this.radius) ?
-        this.velocity.x *= -1: null;
-
-        (this.position.y > height - this.radius || this.position.y < 0 + this.radius) ?
-        this.velocity.y *= -1: null;
+        (this.position.x >= width - this.radius || this.position.x <= 0 + this.radius) ? this.velocity.x *= -1: null;
+        (this.position.y >= height - this.radius || this.position.y <= 0 + this.radius) ? this.velocity.y *= -1: null;
 
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;

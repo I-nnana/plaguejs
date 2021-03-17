@@ -2,11 +2,11 @@ let obj = {
     numOfMolecules: 100,
     numRows: 7,
     numCols: 7,
-    showText: false,
+    showText: true,
     loopState: false,
     gridState: true,
     lineState: true,
-    minMoleculeSize: 15,
+    minMoleculeSize: 10,
     maxMoleculeSize: 15
 };
 

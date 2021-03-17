@@ -4,7 +4,7 @@ let colWidth, rowHeight;
 let percentOfInfected = 0.25;
 
 function setup() {
-    createCanvas(575, 575);
+    createCanvas(800, 800);
 
     //  columns width & height are determined by the canvas width & height divided by the number x of columns and y of rows
     colWidth = width / obj.numCols;
@@ -107,9 +107,6 @@ function checkIntersections(_collection, _oneOnOneSquare) {
         }
     }
 
-
-    
-
 }
 
 function infected(_index){
@@ -128,11 +125,11 @@ function infected(_index){
         }
 }
 
-// The function splitObjectIntoGrid creates for each iteration an array moleculeCollection that is sent to checkIntersections().
+// The function splitObjectIntoGrid creates for each iteration an array moleculeCheck & oneOnOneSquare that are sent to checkIntersections().
 // for each draw() iteration, splitObjectIntoGrid will iterate for n times, determined x the numRows.
-// Each individual array holds y number of molecules indexes determined as such.
-// moleculeCollection filters molecules array with molecule objects whose positions are framed within the current colWidth & rowHeight
-// determinded by i & j. After filter was completed, moleculeCollection maps the objects indexes and is sent to checkIntersections().
+// Each array holds a number n of molecules within a given square. The script will then check whether the molecules intersect.
+// To check whether a given molecule is intersecting another one outside of its square, the script checks in an area of shape L and distance half less than a block,
+// whether a collision is possible and save those molecules in twoByOneSquare & oneByTwoSquare.
 
 function splitObjectIntoGrid() {
     // console.time("new method:");
@@ -148,23 +145,23 @@ function splitObjectIntoGrid() {
             ).map(molecule => molecule.index);
             // console.log(`1x1 square: ${oneOnOneSquare}`);
 
-            let twoOnOneSquare = molecules.filter(molecule =>
+            let twoByOneSquare = molecules.filter(molecule =>
                 molecule.position.x > ((i - 0.5) * colWidth) &&
-                molecule.position.x < ((i + 0.5) * colWidth) &&
+                molecule.position.x < ((i + 1) * colWidth) &&
                 molecule.position.y > ((j - 0.5) * rowHeight) &&
                 molecule.position.y < (j) * rowHeight
             ).map(molecule => molecule.index);
-            // console.log(`2x1 square: ${twoOnOneSquare}`);
+            // console.log(`2x1 square: ${twoByOneSquare}`);
 
-            let oneOnTwoSquare = molecules.filter(molecule =>
+            let oneByTwoSquare = molecules.filter(molecule =>
                 molecule.position.x > ((i - 0.5) * colWidth) &&
                 molecule.position.x < ((i) * colWidth) &&
                 molecule.position.y > ((j) * rowHeight) &&
                 molecule.position.y < ((j + 1.5) * rowHeight)
             ).map(molecule => molecule.index);
-            // console.log(`1x2 square: ${oneOnTwoSquare}`);
+            // console.log(`1x2 square: ${oneByTwoSquare}`);
 
-            let moleculeCheck = [...oneOnOneSquare, ...twoOnOneSquare, ...oneOnTwoSquare];
+            let moleculeCheck = [...oneOnOneSquare, ...twoByOneSquare, ...oneByTwoSquare];
             checkIntersections(moleculeCheck, oneOnOneSquare);
         }
     }
@@ -180,7 +177,7 @@ function splitObjectIntoGrid() {
 
 function gridify() {
     let numDivision = ceil(Math.sqrt(obj.numOfMolecules));
-    let spacing = (width - 60) / numDivision;
+    let spacing = (width ) / numDivision;
 
     molecules.forEach((molecule, index) => {
 
