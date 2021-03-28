@@ -1,14 +1,14 @@
 let obj = {
-    dashboardHeight: 30,
+    dashboardHeight: 0,
     numOfMolecules: 100,
-    numRows: 7,
-    numCols: 7,
+    numRows: 10,
+    numCols: 10,
     showText: true,
     loopState: false,
     gridState: true,
     lineState: true,
-    minMoleculeSize: 10,
-    maxMoleculeSize: 15
+    minMoleculeSize: 11,
+    maxMoleculeSize: 14
 };
 
 var gui = new dat.gui.GUI();

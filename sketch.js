@@ -1,10 +1,13 @@
 //molecules& grid are two arrays, the first stores n molecules while the second will store our grid (see gridify())
 let molecules = [];
 let colWidth, rowHeight;
-let percentOfInfected = 0.25;
+let percentOfInfected = 0.10;
+let counter = 1;
 
 function setup() {
-    createCanvas(800, 800);
+    textSize(30);
+    frameRate(60);
+    createCanvas(600, 600);
 
     //  columns width & height are determined by the canvas width & height divided by the number x of columns and y of rows
     colWidth = width / obj.numCols;
@@ -47,9 +50,36 @@ function draw() {
         molecule.render();
         molecule.step();
     });
-    // console.log(frameRate());
+
+    
+    if(frameCount % 60 == 0) {
+        let infected = [];
+        let immuned = [];
+
+        infected = molecules.filter(molecule =>
+            molecule.attribute == "infected"
+        ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
+
+        infectionTimespan(infected);
+
+        // immuned = infected.filter(molecule =>
+        // (molecule.daysOfInfection >= 4) ? console.log(molecule) : null
+
+        //     // molecule.daysOfInfection >= 4
+        // ).map(molecule => molecule.index);
+
+        frameCount = 0;
+    };
+
 }
 
+/* TIME SPAN & CURATION */
+
+function infectionTimespan(_infected){
+    _infected.forEach(molecule => {
+        molecules[molecule.index].daysOfInfection++
+    })
+}
 
 /* DASHBOARD */
 
@@ -57,7 +87,7 @@ function dashboard(){
     let dashboard = new Dashboard(width, height);
 }
 
-/* END DASHBOARD */
+/* CHECK INTERSECTION */
 
 
 
@@ -124,17 +154,16 @@ function checkIntersections(_collection, _oneByOneSquare) {
 
 function infected(_index){
     if (_index || _index ==0){
-
-            let moleculeA = molecules[_index];
-            // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`)
-            
-            let moleculeB = new Infection(moleculeA.index, moleculeA.position, moleculeA.velocity, moleculeA.radius );
-            // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
-
             let probabilityOfInfection = 0.50;
             let randNum = random();
-            (randNum <= probabilityOfInfection ) ?  molecules.splice(_index, 1, moleculeB) : null;
-           
+            if(randNum <= probabilityOfInfection ){
+                let moleculeA = molecules[_index];
+                let moleculeB = new Infected(moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius);
+                molecules.splice(_index, 1, moleculeB);
+                
+                // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`);
+                // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
+            }            
         }
 }
 
@@ -156,23 +185,22 @@ function splitObjectIntoGrid() {
                 molecule.position.y > j * rowHeight &&
                 molecule.position.y < (j + 1) * rowHeight 
             ).map(molecule => molecule.index);
-            // console.log(`1x1 square: ${oneByOneSquare}`);
 
             let twoByOneSquare = molecules.filter(molecule =>
-                molecule.position.x > ((i - 0.30) * colWidth) &&
+                molecule.position.x > ((i -1) * colWidth) &&
                 molecule.position.x < ((i + 1) * colWidth) &&
-                molecule.position.y > ((j - 0.30) * rowHeight) &&
-                molecule.position.y < (j) * rowHeight
+                molecule.position.y > ((j - 1) * rowHeight) &&
+                molecule.position.y < j * rowHeight
             ).map(molecule => molecule.index);
-            // console.log(`2x1 square: ${twoByOneSquare}`);
 
             let oneByTwoSquare = molecules.filter(molecule =>
-                molecule.position.x > ((i - 0.30) * colWidth) &&
-                molecule.position.x < ((i) * colWidth) &&
-                molecule.position.y > ((j) * rowHeight) &&
-                molecule.position.y < ((j + 1.30) * rowHeight)
+                molecule.position.x > ((i - 1) * colWidth) &&
+                molecule.position.x < (i * colWidth) &&
+                molecule.position.y > (j * rowHeight) &&
+                molecule.position.y < ((j + 2) * rowHeight)
             ).map(molecule => molecule.index);
-            // console.log(`1x2 square: ${oneByTwoSquare}`);
+            
+            // console.log(`1x1 square: ${oneByOneSquare}: 2x1 square: ${twoByOneSquare}, 1x2 square: ${oneByTwoSquare}`);
 
             let moleculeCheck = [...oneByOneSquare, ...twoByOneSquare, ...oneByTwoSquare];
             checkIntersections(moleculeCheck, oneByOneSquare);
@@ -200,7 +228,6 @@ function gridify() {
         //console.log(`The col pos ${colPos} and the row pos ${rowPos}`);
         molecule.position.x = colPos + obj.maxMoleculeSize;
         molecule.position.y = rowPos + obj.maxMoleculeSize;
-
     });
 }
 
@@ -213,6 +240,7 @@ function drawGrid() {
     noFill();
     stroke(155, 155, 155, 50);
     strokeWeight(1);
+    let cellCounter = 0;
 
     for (let j = 0; j < obj.numRows; j++) {
         for (let i = 0; i < obj.numCols; i++) {
