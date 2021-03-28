@@ -1,12 +1,14 @@
 class Molecules {
     // the constructor determines the vectors position/velocity of each balls, their min/max radiuses, colour and indexes
     // that is passed by the draw() function
-    constructor({_i, velX, velY, posX, posY, radius}){
-        this.index = _i;
-        this.position = createVector(posX, posY);
-        this.velocity = createVector(velX, velY);
-        this.radius = radius;
-        this.intersectingColor = color(255, 255, 255);
+    constructor({
+        _i, posX = 0, posY = 0, volX = random(-1, 1), volY = random(-1, 1), radius = random(obj.minMoleculeSize, obj.maxMoleculeSize)
+        }){
+            this.index = _i;
+            this.position = createVector(posX, posY);
+            this.velocity = createVector(volX, volY);
+            this.radius = radius;
+            this.intersectingColor = color(255, 255, 255);
     }
 
     // render() is the function that draws the molecules in the canvas, with no stroke, a certain coulour (see gui.js), molecules figure
@@ -130,8 +132,8 @@ class Molecules {
 }
 
 class Healthy extends Molecules {
-    constructor(_i, posX = 0, posY = 0, velX = random(-1, 1), velY = random(-1, 1), radius = random(obj.minMoleculeSize, obj.maxMoleculeSize)){
-        super({_i, posX, posY, velX, velY, radius});
+    constructor(_i){
+        super({_i});
         this.attribute = "healthy";
         this.fillColor = color(150, 255, 67);
         this.currentColor = this.fillColor;
@@ -139,8 +141,8 @@ class Healthy extends Molecules {
 }
 
 class Infected extends Molecules {
-    constructor(_i, posX = 0, posY = 0, velX = random(-1, 1), velY = random(-1, 1), radius = random(obj.minMoleculeSize, obj.maxMoleculeSize)){
-        super({_i, posX, posY, velX, velY, radius});
+    constructor(_i, posX, posY, volX, volY, radius){
+        super({_i, posX, posY, volX, volY, radius});
         this.attribute = "infected";
         this.fillColor = color(255, 30, 30);
         this.currentColor = this.fillColor;
@@ -149,13 +151,9 @@ class Infected extends Molecules {
 }
 
 class Immuned extends Molecules {
-    constructor(_index, _position, _velocity, _radius){
-        super(molecules);
-        this.position = createVector(_position.x, _position.y);
-        this.velocity = createVector(_velocity.x, _velocity.y);
+    constructor(_i, posX, posY, volX, volY, radius){
+        super({_i, posX, posY, volX, volY, radius});
         this.attribute = "immuned";
-        this.index = _index;
-        this.radius = _radius;
         this.fillColor = color(9, 125, 255);
         this.currentColor = this.fillColor;
     }
