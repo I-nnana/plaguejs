@@ -79,9 +79,17 @@ function pandemicEvolution(){
 }
 
 function infectionTimespan(_infected){
+    // let infectionShare = (_infected.length * obj.numOfMolecules) / 100;
+    // console.log(infectionShare)
+
     _infected.forEach(molecule => {
-        molecules[molecule.index].daysOfInfection++
-        (molecules[molecule.index].daysOfInfection == 3) ? molecules[molecule.index].reproductiveNumber += obj.reproductiveRate : null;
+        moleculeA = molecules[molecule.index];
+        moleculeA.daysOfInfection++;
+        (moleculeA.daysOfInfection == 3) ? moleculeA.reproductionNumber += obj.reproductiveRate : null;
+        // (infectionShare >= 50 && molecules[molecule.index].daysOfInfection > 5 && molecules[molecule.index].velocity.x != 0 && 
+        // molecules[molecule.index].velocity.y != 0) ? 
+        //     (molecules[molecule.index].velocity.x = 0, molecules[molecule.index].velocity.y = 0)
+            // : null;
     })
 }
 

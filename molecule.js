@@ -66,43 +66,48 @@ class Molecules {
     }
 
     bounce(_molecule, _distance){
-        // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
-        let dx = this.position.x - _molecule.position.x;
-        let dy = this.position.y - _molecule.position.y;
+        // console.log(this.attribute)
+        // console.log(_molecule.attribute)
 
-        // normalX & normalY are equal to theirs respective derivates divided by the distance
-        let normalX = dx / _distance;
-        let normalY = dy / _distance;
+        // if(this.attribute !== _molecule.attribute){
+            // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
+            let dx = this.position.x - _molecule.position.x;
+            let dy = this.position.y - _molecule.position.y;
 
-        // dVector is the vector which determine how the molecules will move appropiately on  x & y axis
-        let dVector = (this.velocity.x - _molecule.velocity.x) * normalX;
-        dVector += (this.velocity.y - _molecule.velocity.y) * normalY;
+            // normalX & normalY are equal to theirs respective derivates divided by the distance
+            let normalX = dx / _distance;
+            let normalY = dy / _distance;
 
-        // the molecules velocity is then  determined by the product of dVector by normalX & normalY
-        let dvx = dVector * normalX;
-        let dvy = dVector * normalY;
+            // dVector is the vector which determine how the molecules will move appropiately on  x & y axis
+            let dVector = (this.velocity.x - _molecule.velocity.x) * normalX;
+            dVector += (this.velocity.y - _molecule.velocity.y) * normalY;
 
-        let constrainX = constrain(dvx, -1, 1);
-        let constrainY = constrain(dvy, -1, 1);
+            // the molecules velocity is then  determined by the product of dVector by normalX & normalY
+            let dvx = dVector * normalX;
+            let dvy = dVector * normalY;
 
-        this.velocity.x -= constrainX;
-        this.velocity.y -= constrainY;
+            let constrainX = constrain(dvx, -1, 1);
+            let constrainY = constrain(dvy, -1, 1);
 
-        _molecule.velocity.x += constrainX;
-        _molecule.velocity.y += constrainY;
+            this.velocity.x -= constrainX;
+            this.velocity.y -= constrainY;
+
+            _molecule.velocity.x += constrainX;
+            _molecule.velocity.y += constrainY;
+        // }
     }
 
     infection(_molecule){ 
         let id; 
         let probabilityOfInfection;
 
-        if(this.attribute === "healthy" &&  _molecule.attribute === "infected" || this.attribute === "infected" &&  _molecule.attribute === "healthy"){
-            if(this.attribute === "healthy"){
+        if(this.attribute != _molecule.attribute){
+            if(this.attribute == "healthy"){
                 id = this.index;
-                probabilityOfInfection = _molecule.reproductiveNumber
+                probabilityOfInfection = _molecule.reproductionNumber
             } else {
                 id = _molecule.index
-                probabilityOfInfection = this.reproductiveNumber
+                probabilityOfInfection = this.reproductionNumber
             }
         }
 
@@ -160,7 +165,7 @@ class Infected extends Molecules {
         this.fillColor = color(255, 30, 30);
         this.currentColor = this.fillColor;
         this.daysOfInfection = 0;
-        this.reproductiveNumber = 0;
+        this.reproductionNumber = 0;
     }    
 }
 
