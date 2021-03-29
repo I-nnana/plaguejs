@@ -7,14 +7,16 @@ let obj = {
     loopState: false,
     gridState: true,
     lineState: true,
-    minMoleculeSize: 11,
-    maxMoleculeSize: 14
+    minMoleculeSize: 12,
+    maxMoleculeSize: 15,
+    reproductiveRate: 0.5
 };
 
 var gui = new dat.gui.GUI();
 
 gui.remember(obj);
 
+// LAYOUT
 section01 = gui.addFolder('Layout');
 section01.add(obj, 'dashboardHeight').min(0).max(30).step(30).onChange(function() {
     setup();
@@ -45,6 +47,7 @@ section01.add(obj, 'lineState').onChange(function() {
     draw()
 });
 
+// DESIGN
 section02 = gui.addFolder('Design');
 // section02.addColor(obj, 'ballColor').onChange(function() {
 //     draw()
@@ -57,6 +60,13 @@ section02.add(obj, 'minMoleculeSize').min(1).max(50).step(1).onChange(function()
     draw()
 });
 section02.add(obj, 'maxMoleculeSize').min(1).max(50).step(1).onChange(function() {
+    setup();
+    draw()
+});
+
+// INFECTION SPREAD
+section03 = gui.addFolder('Pandemic');
+section03.add(obj, 'reproductiveRate').min(0.05).max(1).step(0.05).onChange(function() {
     setup();
     draw()
 });

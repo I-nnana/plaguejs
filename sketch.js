@@ -32,6 +32,8 @@ function draw() {
 
     dashboard();
 
+    pandemicEvolution();
+
     // reset() is a function from molecule's class, that draws the molecules with their orignal colour 
     // once they are nomore intersecting with another molecule
     molecules.forEach((molecule) => {
@@ -42,7 +44,7 @@ function draw() {
     splitObjectIntoGrid();
     // checkIntersectionsOld();
 
-    // the follwing if conditional determines wheteher or not the grid shall be drawn
+    // the following if conditional determines wheteher or not the grid shall be drawn
     obj.gridState ? drawGrid() : null;
 
     // render() and step() are both function frm the molecule's class, one draw the molecules i the canvas, while the second 'moves' the molecules
@@ -51,7 +53,11 @@ function draw() {
         molecule.step();
     });
 
-    
+}
+
+/* PANDEMIC EVOLUTION  */
+
+function pandemicEvolution(){
     if(frameCount % 60 == 0) {
 
         let infected = molecules.filter(molecule =>
@@ -62,7 +68,7 @@ function draw() {
         infected = [];
 
         let immuned = molecules.filter(molecule =>
-            molecule.daysOfInfection > 13
+            molecule.daysOfInfection > 15
         ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
         
         gainImmunity(immuned);
@@ -70,14 +76,12 @@ function draw() {
 
         frameCount = 0;
     };
-
 }
-
-/* TIME SPAN & IMMUNED */
 
 function infectionTimespan(_infected){
     _infected.forEach(molecule => {
         molecules[molecule.index].daysOfInfection++
+        (molecules[molecule.index].daysOfInfection == 3) ? molecules[molecule.index].reproductiveNumber += obj.reproductiveRate : null;
     })
 }
 
@@ -131,7 +135,6 @@ function checkIntersectionsOld() {
 // Whether or not lineState returns true or false, the script will draw the grid on the canvas
 
 function checkIntersections(_collection, _oneByOneSquare) {
-    let index;
 
     for (let a = 0; a < _oneByOneSquare.length; a++) {
         for (let b = a + 1; b < _oneByOneSquare.length; b++) {
@@ -148,6 +151,7 @@ function checkIntersections(_collection, _oneByOneSquare) {
 
     for (let a = 0; a < _collection.length; a++) {
         for (let b = a + 1; b < _collection.length; b++) {
+            let index;
 
             let moleculeA = molecules[_collection[a]];
             let moleculeB = molecules[_collection[b]];
@@ -155,24 +159,25 @@ function checkIntersections(_collection, _oneByOneSquare) {
             moleculeA.isIntersecting(moleculeB) ? (
                 moleculeA.changeColor(), 
                 moleculeB.changeColor(),
-                index = moleculeA.infection(moleculeB),
-                infected(index)
+                contact = moleculeA.infection(moleculeB),
+                infection(contact)
             ) : null;
         }
     }
 
 }
 
-function infected(_index){
-    if (_index || _index == 0){
-        let probabilityOfInfection = 0.25;
+/* MOLECULE INFECTION */
+
+function infection(_contact){
+    if (_contact.index || _contact.index == 0){
         let randNum = random();
-        if(randNum <= probabilityOfInfection ){
-            let moleculeA = molecules[_index];
+        if(randNum <= _contact.rate ){
+            let moleculeA = molecules[_contact.index];
             let moleculeB = new Infected(
                 moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius
             );
-            molecules.splice(_index, 1, moleculeB);
+            molecules.splice(_contact.index, 1, moleculeB);
             
             // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`);
             // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);

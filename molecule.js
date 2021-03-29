@@ -93,12 +93,25 @@ class Molecules {
     }
 
     infection(_molecule){ 
-        let id;        
-        (this.attribute === "healthy" &&  _molecule.attribute === "infected" || this.attribute === "infected" &&  _molecule.attribute === "healthy") ? 
-            ((this.attribute === "healthy") ? id = this.index :  id = _molecule.index)
-            : null;
-        
-        return id;
+        let id; 
+        let probabilityOfInfection;
+
+        if(this.attribute === "healthy" &&  _molecule.attribute === "infected" || this.attribute === "infected" &&  _molecule.attribute === "healthy"){
+            if(this.attribute === "healthy"){
+                id = this.index;
+                probabilityOfInfection = _molecule.reproductiveNumber
+            } else {
+                id = _molecule.index
+                probabilityOfInfection = this.reproductiveNumber
+            }
+        }
+
+        (probabilityOfInfection == null) ? probabilityOfInfection = 0 : null;
+
+        return {
+            index: id, 
+            rate: probabilityOfInfection
+        };
     }
 
     // changeColor() gives a new colour scheme to our molecules is they are intersecting
@@ -147,6 +160,7 @@ class Infected extends Molecules {
         this.fillColor = color(255, 30, 30);
         this.currentColor = this.fillColor;
         this.daysOfInfection = 0;
+        this.reproductiveNumber = 0;
     }    
 }
 
