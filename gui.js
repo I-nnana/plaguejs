@@ -16,7 +16,7 @@ var gui = new dat.gui.GUI();
 gui.remember(obj);
 
 section01 = gui.addFolder('Layout');
-section01.add(obj, 'dashboardHeight').min(0).max(50).step(5).onChange(function() {
+section01.add(obj, 'dashboardHeight').min(0).max(30).step(30).onChange(function() {
     setup();
     draw();
 });

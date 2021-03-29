@@ -53,31 +53,44 @@ function draw() {
 
     
     if(frameCount % 60 == 0) {
-        let infected = [];
-        let immuned = [];
 
-        infected = molecules.filter(molecule =>
+        let infected = molecules.filter(molecule =>
             molecule.attribute == "infected"
         ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
 
         infectionTimespan(infected);
+        infected = [];
 
-        // immuned = infected.filter(molecule =>
-        // (molecule.daysOfInfection >= 4) ? console.log(molecule) : null
-
-        //     // molecule.daysOfInfection >= 4
-        // ).map(molecule => molecule.index);
+        let immuned = molecules.filter(molecule =>
+            molecule.daysOfInfection > 13
+        ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
+        
+        gainImmunity(immuned);
+        immuned = [];
 
         frameCount = 0;
     };
 
 }
 
-/* TIME SPAN & CURATION */
+/* TIME SPAN & IMMUNED */
 
 function infectionTimespan(_infected){
     _infected.forEach(molecule => {
         molecules[molecule.index].daysOfInfection++
+    })
+}
+
+function gainImmunity(_immuned){
+    _immuned.forEach(molecule => {
+        let moleculeA = molecules[molecule.index];        
+        let moleculeB = new Immuned(
+            moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius
+        );
+        molecules.splice(molecule.index, 1, moleculeB);
+        
+        // console.log(`Molecule A index: ${moleculeA.index}, Position: ${moleculeA.position}, Velocity: ${moleculeA.velocity}, Day of infection: ${moleculeA.daysOfInfection}`);
+        // console.log(`Molecule B index: ${moleculeB.index}, Position: ${moleculeB.position}, Velocity: ${moleculeB.velocity}, Day of infection: ${moleculeA.daysOfInfection}`);
     })
 }
 
@@ -88,8 +101,6 @@ function dashboard(){
 }
 
 /* CHECK INTERSECTION */
-
-
 
 // The Function checkIntersectionsOld() checks whether of molecules are interecting regardless is they are sharing a cell or not
 // using nested for loop using moleculeA and moleculeB storing a molecules object via molecules[a/b].*
@@ -153,18 +164,20 @@ function checkIntersections(_collection, _oneByOneSquare) {
 }
 
 function infected(_index){
-    if (_index || _index ==0){
-            let probabilityOfInfection = 0.50;
-            let randNum = random();
-            if(randNum <= probabilityOfInfection ){
-                let moleculeA = molecules[_index];
-                let moleculeB = new Infected(moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius);
-                molecules.splice(_index, 1, moleculeB);
-                
-                // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`);
-                // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
-            }            
-        }
+    if (_index || _index == 0){
+        let probabilityOfInfection = 0.25;
+        let randNum = random();
+        if(randNum <= probabilityOfInfection ){
+            let moleculeA = molecules[_index];
+            let moleculeB = new Infected(
+                moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius
+            );
+            molecules.splice(_index, 1, moleculeB);
+            
+            // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`);
+            // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
+        }            
+    }
 }
 
 // The function splitObjectIntoGrid creates for each iteration an array moleculeCheck & oneByOneSquare that are sent to checkIntersections().
