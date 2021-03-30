@@ -143,24 +143,27 @@ class Molecules {
     }
 
     infection(_molecule){ 
-        let id; 
+        let healthyId; 
+        let infectedId; 
         let probabilityOfInfection;
 
         if(this.attribute != "immuned" &&  _molecule.attribute != "immuned" && this.attribute !=  _molecule.attribute ){
             if(this.attribute == "healthy"){
-                id = this.index;
-                probabilityOfInfection = _molecule.reproductionNumber
+                healthyId = this.index;
+                infectedId = _molecule.index;
+                // probabilityOfInfection = _molecule.reproductionNumber
             } else {
-                id = _molecule.index
-                probabilityOfInfection = this.reproductionNumber
+                healthyId = _molecule.index
+                infectedId = this.index;
+                // probabilityOfInfection = this.reproductionNumber
             }
         }
 
         (probabilityOfInfection == null) ? probabilityOfInfection = 0 : null;
 
         return {
-            index: id, 
-            rate: probabilityOfInfection
+            healthyId: healthyId, 
+            infectedId: infectedId
         };
     }
 

@@ -60,28 +60,14 @@ function draw() {
 /* PANDEMIC EVOLUTION  */
 
 function pandemicEvolution(){
-    // if(frameCount % 60 == 0) {
 
         let infected = molecules.filter(molecule =>
             molecule.attribute == "infected"
         ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
-
         
         ((infected.length * obj.numOfMolecules) / 100 >= obj.counterMeasure * 100) ? infectionShare = true : null;
 
-        // infectionTimespan(infected);
-
-        infected.forEach(molecule => {
-            moleculeA = molecules[molecule.index];
-            moleculeA.frames+=1;
-
-            (moleculeA.frames % 60 == 0) ? moleculeA.daysOfInfection += 1: null;
-    
-            (moleculeA.daysOfInfection ==  3) ? moleculeA.reproductionNumber += obj.reproductiveRate : null;
-    
-            (infectionShare == true && moleculeA.daysOfInfection == 5) ? (moleculeA.velocity.x = 0, moleculeA.velocity.y = 0): null;
-        })
-
+        infectionTimespan(infected);
         infected = [];
 
         let immuned = molecules.filter(molecule =>
@@ -92,20 +78,21 @@ function pandemicEvolution(){
         immuned = [];
 
         frameCount = 0;
-    // };
 }
 
-// function infectionTimespan(_infected){
+function infectionTimespan(_infected){
+    _infected.forEach(molecule => {
+        
+        moleculeA = molecules[molecule.index];
+        moleculeA.frames+=1;
 
-//     _infected.forEach(molecule => {
-//         moleculeA = molecules[molecule.index];
-//         moleculeA.daysOfInfection++;
+        (moleculeA.frames % 60 == 0) ? moleculeA.daysOfInfection += 1: null;
 
-//         (moleculeA.daysOfInfection == 3) ? moleculeA.reproductionNumber += obj.reproductiveRate : null;
+        (moleculeA.frames ==  180) ? moleculeA.reproductionNumber = moleculeA.reproductionNumber+  obj.reproductiveRate : null;
 
-//         (infectionShare == true && moleculeA.daysOfInfection > 5) ? (moleculeA.velocity.x = 0, moleculeA.velocity.y = 0): null;
-//     })
-// }
+        (infectionShare == true && moleculeA.daysOfInfection == 5) ? (moleculeA.velocity.x = 0, moleculeA.velocity.y = 0): null;
+    })
+}
 
 function gainImmunity(_immuned){
     _immuned.forEach(molecule => {
@@ -114,9 +101,6 @@ function gainImmunity(_immuned){
             moleculeA.index, moleculeA.position.x, moleculeA.position.y, random(-1, 1), random(-1, 1), moleculeA.radius
         );
         molecules.splice(molecule.index, 1, moleculeB);
-        
-        // console.log(`Molecule A index: ${moleculeA.index}, Position: ${moleculeA.position}, Velocity: ${moleculeA.velocity}, Day of infection: ${moleculeA.daysOfInfection}`);
-        // console.log(`Molecule B index: ${moleculeB.index}, Position: ${moleculeB.position}, Velocity: ${moleculeB.velocity}, Day of infection: ${moleculeA.daysOfInfection}`);
     })
 }
 
@@ -192,18 +176,30 @@ function checkIntersections(_collection, _oneByOneSquare) {
 /* MOLECULE INFECTION */
 
 function infection(_contact){
-    if (_contact.index || _contact.index == 0){
+    if (_contact.healthyId || _contact.healthyId == 0){
+
         let randNum = random();
-        if(randNum <= _contact.rate ){
-            let moleculeA = molecules[_contact.index];
+        let rateOfInfection = molecules[_contact.infectedId].reproductionNumber;
+        let masks = molecules[_contact.healthyId].mask + molecules[_contact.infectedId].mask;
+
+        if(randNum <= (rateOfInfection - masks) && infectionShare){
+            let moleculeA = molecules[_contact.healthyId];            
             let moleculeB = new Infected(
                 moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius
             );
-            molecules.splice(_contact.index, 1, moleculeB);
-            
+            molecules.splice(_contact.healthyId, 1, moleculeB);  
+
+        } else if (randNum <= rateOfInfection){
+            let moleculeA = molecules[_contact.healthyId];            
             // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`);
+
+            let moleculeB = new Infected(
+                moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius
+            );
+            molecules.splice(_contact.healthyId, 1, moleculeB);            
             // console.log(`Molecule B index: ${moleculeB.index}, \nPosition: ${moleculeB.position}, \nVelocity: ${moleculeB.velocity}`);
-        }            
+
+        }
     }
 }
 
