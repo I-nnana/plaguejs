@@ -3,6 +3,7 @@ let molecules = [];
 let colWidth, rowHeight;
 let percentOfInfected = 0.10;
 let counter = 1;
+let infectionShare = false;
 
 function setup() {
     textSize(30);
@@ -32,7 +33,6 @@ function draw() {
 
     dashboard();
 
-    pandemicEvolution();
 
     // reset() is a function from molecule's class, that draws the molecules with their orignal colour 
     // once they are nomore intersecting with another molecule
@@ -43,6 +43,8 @@ function draw() {
     // splitObjectIntoGrid (or checkIntersectionsOld) checks whether or not molecules are intersecting
     splitObjectIntoGrid();
     // checkIntersectionsOld();
+    
+    pandemicEvolution();
 
     // the following if conditional determines wheteher or not the grid shall be drawn
     obj.gridState ? drawGrid() : null;
@@ -58,13 +60,28 @@ function draw() {
 /* PANDEMIC EVOLUTION  */
 
 function pandemicEvolution(){
-    if(frameCount % 60 == 0) {
+    // if(frameCount % 60 == 0) {
 
         let infected = molecules.filter(molecule =>
             molecule.attribute == "infected"
         ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
 
-        infectionTimespan(infected);
+        
+        ((infected.length * obj.numOfMolecules) / 100 >= obj.counterMeasure * 100) ? infectionShare = true : null;
+
+        // infectionTimespan(infected);
+
+        infected.forEach(molecule => {
+            moleculeA = molecules[molecule.index];
+            moleculeA.frames+=1;
+
+            (moleculeA.frames % 60 == 0) ? moleculeA.daysOfInfection += 1: null;
+    
+            (moleculeA.daysOfInfection ==  3) ? moleculeA.reproductionNumber += obj.reproductiveRate : null;
+    
+            (infectionShare == true && moleculeA.daysOfInfection == 5) ? (moleculeA.velocity.x = 0, moleculeA.velocity.y = 0): null;
+        })
+
         infected = [];
 
         let immuned = molecules.filter(molecule =>
@@ -75,29 +92,26 @@ function pandemicEvolution(){
         immuned = [];
 
         frameCount = 0;
-    };
+    // };
 }
 
-function infectionTimespan(_infected){
-    // let infectionShare = (_infected.length * obj.numOfMolecules) / 100;
-    // console.log(infectionShare)
+// function infectionTimespan(_infected){
 
-    _infected.forEach(molecule => {
-        moleculeA = molecules[molecule.index];
-        moleculeA.daysOfInfection++;
-        (moleculeA.daysOfInfection == 3) ? moleculeA.reproductionNumber += obj.reproductiveRate : null;
-        // (infectionShare >= 50 && molecules[molecule.index].daysOfInfection > 5 && molecules[molecule.index].velocity.x != 0 && 
-        // molecules[molecule.index].velocity.y != 0) ? 
-        //     (molecules[molecule.index].velocity.x = 0, molecules[molecule.index].velocity.y = 0)
-            // : null;
-    })
-}
+//     _infected.forEach(molecule => {
+//         moleculeA = molecules[molecule.index];
+//         moleculeA.daysOfInfection++;
+
+//         (moleculeA.daysOfInfection == 3) ? moleculeA.reproductionNumber += obj.reproductiveRate : null;
+
+//         (infectionShare == true && moleculeA.daysOfInfection > 5) ? (moleculeA.velocity.x = 0, moleculeA.velocity.y = 0): null;
+//     })
+// }
 
 function gainImmunity(_immuned){
     _immuned.forEach(molecule => {
         let moleculeA = molecules[molecule.index];        
         let moleculeB = new Immuned(
-            moleculeA.index, moleculeA.position.x, moleculeA.position.y, moleculeA.velocity.x, moleculeA.velocity.y, moleculeA.radius
+            moleculeA.index, moleculeA.position.x, moleculeA.position.y, random(-1, 1), random(-1, 1), moleculeA.radius
         );
         molecules.splice(molecule.index, 1, moleculeB);
         

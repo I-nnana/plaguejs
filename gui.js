@@ -8,8 +8,10 @@ let obj = {
     gridState: true,
     lineState: true,
     minMoleculeSize: 12,
-    maxMoleculeSize: 15,
-    reproductiveRate: 0.5
+    maxMoleculeSize: 16,
+    reproductiveRate: 0.5,
+    counterMeasure: 0.5,
+    maskProtection: 0.10,
 };
 
 var gui = new dat.gui.GUI();
@@ -67,6 +69,14 @@ section02.add(obj, 'maxMoleculeSize').min(1).max(50).step(1).onChange(function()
 // INFECTION SPREAD
 section03 = gui.addFolder('Pandemic');
 section03.add(obj, 'reproductiveRate').min(0.05).max(1).step(0.05).onChange(function() {
+    setup();
+    draw()
+});
+section03.add(obj, 'counterMeasure').min(0.1).max(0.8).step(0.05).onChange(function() {
+    setup();
+    draw()
+});
+section03.add(obj, 'maskProtection').min(0.1).max(0.5).step(0.05).onChange(function() {
     setup();
     draw()
 });
