@@ -1,14 +1,15 @@
 //molecules& grid are two arrays, the first stores n molecules while the second will store our grid (see gridify())
-let molecules = [];
+let molecules, graphArray = [];
 let colWidth, rowHeight;
 let percentOfInfected = 0.10;
 let counter = 1;
 let infectionShare = false;
+let daysCounter = 0;
 
 function setup() {
     textSize(30);
     frameRate(60);
-    createCanvas(600, 600);
+    createCanvas(700, 700);
 
     //  columns width & height are determined by the canvas width & height divided by the number x of columns and y of rows
     colWidth = width / obj.numCols;
@@ -31,8 +32,7 @@ function draw() {
     // background() determines the canvas backgroung colour
     background(33,33,33);
 
-    dashboard();
-
+    obj.dashboard ? drawDashboard() :  daysCounter = 0;
 
     // reset() is a function from molecule's class, that draws the molecules with their orignal colour 
     // once they are nomore intersecting with another molecule
@@ -41,8 +41,8 @@ function draw() {
     });
 
     // splitObjectIntoGrid (or checkIntersectionsOld) checks whether or not molecules are intersecting
-    splitObjectIntoGrid();
     // checkIntersectionsOld();
+    splitObjectIntoGrid();
     
     pandemicEvolution();
 
@@ -54,6 +54,7 @@ function draw() {
         molecule.render();
         molecule.step();
     });
+
 
 }
 
@@ -71,24 +72,26 @@ function pandemicEvolution(){
         infected = [];
 
         let immuned = molecules.filter(molecule =>
-            molecule.daysOfInfection > 15
+            molecule.daysOfInfection > obj.virusLifespan
         ).map(({index, daysOfInfection}) => ({index, daysOfInfection}));
         
         gainImmunity(immuned);
         immuned = [];
 
-        frameCount = 0;
 }
 
 function infectionTimespan(_infected){
     _infected.forEach(molecule => {
         
         moleculeA = molecules[molecule.index];
-        moleculeA.frames+=1;
+        moleculeA.frames +=1;
 
         (moleculeA.frames % 60 == 0) ? moleculeA.daysOfInfection += 1: null;
 
-        (moleculeA.frames ==  180) ? moleculeA.reproductionNumber = moleculeA.reproductionNumber+  obj.reproductiveRate : null;
+        if (moleculeA.frames ==  obj.endIncumbation){
+            moleculeA.reproductionNumber = obj.reproductiveRate;
+            moleculeA.infectionColor();
+        }
 
         (infectionShare == true && moleculeA.daysOfInfection == 5) ? (moleculeA.velocity.x = 0, moleculeA.velocity.y = 0): null;
     })
@@ -102,12 +105,6 @@ function gainImmunity(_immuned){
         );
         molecules.splice(molecule.index, 1, moleculeB);
     })
-}
-
-/* DASHBOARD */
-
-function dashboard(){
-    let dashboard = new Dashboard(width, height);
 }
 
 /* CHECK INTERSECTION */
@@ -180,7 +177,7 @@ function infection(_contact){
 
         let randNum = random();
         let rateOfInfection = molecules[_contact.infectedId].reproductionNumber;
-        let masks = molecules[_contact.healthyId].mask + molecules[_contact.infectedId].mask;
+        let masks = obj.maskProtection;
 
         if(randNum <= (rateOfInfection - masks) && infectionShare){
             let moleculeA = molecules[_contact.healthyId];            
@@ -189,7 +186,7 @@ function infection(_contact){
             );
             molecules.splice(_contact.healthyId, 1, moleculeB);  
 
-        } else if (randNum <= rateOfInfection){
+        } else if (randNum <= rateOfInfection && !infectionShare){
             let moleculeA = molecules[_contact.healthyId];            
             // console.log(`Molecule A index: ${moleculeA.index}, \nPosition: ${moleculeA.position}, \nVelocity: ${moleculeA.velocity}`);
 
@@ -276,7 +273,6 @@ function drawGrid() {
     noFill();
     stroke(155, 155, 155, 50);
     strokeWeight(1);
-    let cellCounter = 0;
 
     for (let j = 0; j < obj.numRows; j++) {
         for (let i = 0; i < obj.numCols; i++) {
@@ -292,4 +288,88 @@ function checkLoop() {
     } else {
         noLoop();
     }
+}
+
+// depending wheter checkLoop gets true or false, the animation is paused or playing
+function checkDashboard() {
+
+    if (obj.dashboard == true) {
+        obj.dashboardHeight = 30
+        drawDashboard()
+    } else {
+        obj.dashboardHeight = 0
+    }
+}
+
+function drawDashboard() {
+
+    let heightLimit = (height * (100  - obj.dashboardHeight) / 100);
+    let h = (height- heightLimit) /2;
+
+    stroke(255, 255, 255);
+    strokeWeight(2);
+    line(0, heightLimit, width, heightLimit);
+
+    // DATA
+
+    strokeWeight(0);
+    textSize(14);
+    textAlign(LEFT);
+    fill(255, 255, 255);
+
+
+    let frames = frameCount;
+    (frames % 60 == 0) ? daysCounter+=1 : null;
+
+    text(`Days passed: ${daysCounter}`, 50, heightLimit + 50);
+    text(`Reproductive rate: ${obj.reproductiveRate * 100}% `, 50, heightLimit + 75);
+    text(`Counter measures threshold: ${obj.counterMeasure * 100}% `, 50, heightLimit + 100);
+    text(`Mask protection: ${obj.maskProtection * 100}% `, 50, heightLimit + 125);
+    text(`Virus lifespan: ${obj.virusLifespan} days`, 50, heightLimit + 150);
+    text(`Days of incubation: ${obj.endIncumbation / 60} days`, 50, heightLimit + 175);
+
+    // DATA
+
+    let i = 0;
+    let j = 100;
+
+    let numInfected = molecules.filter(molecule => molecule.attribute == "infected");
+    let numHealthy = molecules.filter(molecule => molecule.attribute == "healthy");
+    let numImmuned = molecules.filter(molecule => molecule.attribute == "immuned");
+    let iHeight = map(numInfected.length, i, obj.numOfMolecules, 0, j);
+    let hHeight = map(numHealthy.length, i, obj.numOfMolecules, 0, j);
+    let mHeight = map(numImmuned.length, i, obj.numOfMolecules, 0, j);
+    
+
+    if (graphArray.length >= 300) {
+        graphArray.shift();
+    }
+
+    graphArray.push({
+        numInfected: numInfected.length
+        , numHealthy: numHealthy.length
+        , numImmuned: numImmuned.length
+        , iHeight: iHeight
+        , hHeight: hHeight
+        , mHeight: mHeight
+    })
+
+    // console.log(graphArray);
+
+    push();
+    translate(width/2 + 25,  (heightLimit + h + h /2));
+    graphArray.forEach(function (data, index) {
+        noStroke();
+        fill(255, 0, 0)
+        rect(index, 0, 1, -data.iHeight)
+        fill(0, 255, 0);
+        rect(index, -data.iHeight, 1, -data.hHeight)
+        fill(9, 125, 255);
+        rect(index, data.mHeight - j, 1, -data.mHeight)
+    })
+    pop();
+
+    
+
+
 }

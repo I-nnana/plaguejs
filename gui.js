@@ -3,15 +3,18 @@ let obj = {
     numOfMolecules: 100,
     numRows: 10,
     numCols: 10,
+    dashboard: false,
     showText: true,
     loopState: false,
     gridState: true,
     lineState: true,
-    minMoleculeSize: 12,
-    maxMoleculeSize: 16,
+    minMoleculeSize: 9,
+    maxMoleculeSize: 12,
     reproductiveRate: 0.5,
     counterMeasure: 0.5,
     maskProtection: 0.10,
+    virusLifespan: 17,
+    endIncumbation: 180,
 };
 
 var gui = new dat.gui.GUI();
@@ -20,7 +23,8 @@ gui.remember(obj);
 
 // LAYOUT
 section01 = gui.addFolder('Layout');
-section01.add(obj, 'dashboardHeight').min(0).max(30).step(30).onChange(function() {
+section01.add(obj, 'dashboard').onChange(function() {
+    checkDashboard()
     setup();
     draw();
 });
@@ -77,6 +81,14 @@ section03.add(obj, 'counterMeasure').min(0.1).max(0.8).step(0.05).onChange(funct
     draw()
 });
 section03.add(obj, 'maskProtection').min(0.1).max(0.5).step(0.05).onChange(function() {
+    setup();
+    draw()
+});
+section03.add(obj, 'virusLifespan').min(10).max(20).step(1).onChange(function() {
+    setup();
+    draw()
+});
+section03.add(obj, 'endIncumbation').min(180).max(360).step(60).onChange(function() {
     setup();
     draw()
 });

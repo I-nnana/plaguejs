@@ -19,9 +19,9 @@ class Molecules {
         ellipse(this.position.x, this.position.y, this.radius * 2, this.radius * 2);
         fill(0);
         (obj.showText) ? (
-            textSize(10),
+            textSize(9),
             textAlign(CENTER ),
-            text(this.index, this.position.x, this.position.y + 6)) : null;
+            text(this.index, this.position.x, this.position.y + 3)) : null;
     }
 
     // isIntersecting() is the function that checks the molecules intersection. p5.js comes with the dist() function 
@@ -31,14 +31,9 @@ class Molecules {
     isIntersecting(_molecule) {
         let distance = dist(this.position.x, this.position.y, _molecule.position.x, _molecule.position.y)
         let gap = distance - this.radius - _molecule.radius;
-        // let check = (gap <= 0) ? true : false;
         let collision;
-        let socialDistancing
-        (gap <= 0) ? collision = true : (gap > 0 && gap < 15) ? socialDistancing = true : false;
 
-        if(socialDistancing){
-            // this.distancing(_molecule, distance);
-        }
+        (gap <= 0) ? collision = true : false;
 
         if (collision){
             this.repulse(_molecule);
@@ -47,74 +42,68 @@ class Molecules {
         return collision;
     }
 
-    distancing(_molecule, _distance){
-        // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
-        let dx = this.position.x - _molecule.position.x;
-        let dy = this.position.y - _molecule.position.y;
-
-        // normalX & normalY are equal to theirs respective derivates divided by the distance
-        let normalX = dx / _distance;
-        let normalY = dy / _distance;
-
-        // dVector is the vector which determine how the molecules will move appropiately on  x & y axis
-        let dVector = (this.velocity.x - _molecule.velocity.x) * normalX;
-        dVector += (this.velocity.y - _molecule.velocity.y) * normalY;
-
-        // the molecules velocity is then  determined by the product of dVector by normalX & normalY
-        let dvx = dVector * normalX;
-        let dvy = dVector * normalY;
-
-        let constrainX = constrain(dvx, -1, 1);
-        let constrainY = constrain(dvy, -1, 1)
-        
-        this.velocity.x *= constrainX;
-        this.velocity.y *= constrainY;
-
-        _molecule.velocity.x *= constrainX;
-        _molecule.velocity.y *= constrainY;
-    }
 
     bounce(_molecule, _distance){
-        // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
-        let dx = this.position.x - _molecule.position.x;
-        let dy = this.position.y - _molecule.position.y;
+        // if (this.daysOfInfection >= 5 && infectionShare){
 
-        // normalX & normalY are equal to theirs respective derivates divided by the distance
-        let normalX = dx / _distance;
-        let normalY = dy / _distance;
+            // console.log(_molecule.position.x)
+            // console.log(_molecule.position.y)
 
-        // dVector is the vector which determine how the molecules will move appropiately on  x & y axis
-        let dVector = (this.velocity.x - _molecule.velocity.x) * normalX;
-        dVector += (this.velocity.y - _molecule.velocity.y) * normalY;
+            // let v1 = _molecule.velocity.x * -1
+            // let v2 = _molecule.velocity.y * -1
+            
+            // _molecule.position.x += v1;
+            // _molecule.position.y +=  v2;
 
-        // the molecules velocity is then  determined by the product of dVector by normalX & normalY
-        let dvx = dVector * normalX;
-        let dvy = dVector * normalY;
+            // console.log(_molecule.position.x)
+            // console.log(_molecule.position.y)
 
-        let constrainX = constrain(dvx, -1, 1);
-        let constrainY = constrain(dvy, -1, 1)
+            // noLoop()
+   
+        // } else if (_molecule.daysOfInfection >= 5 && infectionShare){
 
-        if(this.daysOfInfection > 5 && infectionShare){
-            this.velocity.x *= -constrainX;
-            this.velocity.y *= -constrainY;
-    
-            _molecule.velocity.x += constrainX * 2;
-            _molecule.velocity.y += constrainY * 2;
-    
-        } else if(_molecule.daysOfInfection > 5 && infectionShare){
-            this.velocity.x -= constrainX * 2;
-            this.velocity.y -= constrainY * 2;
-    
-            _molecule.velocity.x *= -constrainX;
-            _molecule.velocity.y *= -constrainY;
-    
-        }else{
+            // console.log(_molecule.position.x)
+            // console.log(_molecule.position.y)
+
+            // let v1 = this.velocity.x * -1
+            // let v2 = this.velocity.y * -1
+
+            // this.position.x += v1;
+            // this.position.y +=  v2;
+
+            // console.log(_molecule.position.x)
+            // console.log(_molecule.position.y)
+
+            // noLoop()
+ 
+        // } else {
+            // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
+            let dx = this.position.x - _molecule.position.x;
+            let dy = this.position.y - _molecule.position.y;
+
+            // normalX & normalY are equal to theirs respective derivates divided by the distance
+            let normalX = dx / _distance;
+            let normalY = dy / _distance;
+
+            // dVector is the vector which determine how the molecules will move appropiately on  x & y axis
+            let dVector = (this.velocity.x - _molecule.velocity.x) * normalX;
+            dVector += (this.velocity.y - _molecule.velocity.y) * normalY;
+
+            // the molecules velocity is then  determined by the product of dVector by normalX & normalY
+            let dvx = dVector * normalX;
+            let dvy = dVector * normalY;
+
+            // constrain limits the velocities between -1 & 1
+            let constrainX = constrain(dvx, -1, 1);
+            let constrainY = constrain(dvy, -1, 1);
+
             this.velocity.x -= constrainX;
             this.velocity.y -= constrainY;
-    
+
             _molecule.velocity.x += constrainX;
             _molecule.velocity.y += constrainY;
-        }
+        // }
+            
     }
 
     // repulse insures that the molecules  aren't overlaping by calculating  the distance by which they may overlap based on 
@@ -177,6 +166,11 @@ class Molecules {
         this.currentColor = this.fillColor
     }
 
+    infectionColor(){
+        this.fillColor = color(255, 0, 0);
+    }
+
+
     //  step() switches the direction a molecules is heading to if it hits the borders of the canvas.
     //  however, if a molecule's position exceeds the result of the canvas's width malus the radius (or is below radius malus 1),
     //  then the molecule is out the canvas the boundaries. If so, step() reposition the ball to be in the canvas before switching the velocity's direction.
@@ -184,7 +178,8 @@ class Molecules {
         let heightLimit = (height * (100  - obj.dashboardHeight) / 100);
 
         (this.position.x > width - this.radius) ? (this.position.x = width - this.radius) :
-        (this.position.x < this.radius - 1) ? (this.position.x = this.radius) : 
+        (this.position.x < this.radius - 1) ? (this.position.x = this.radius) :
+
         (this.position.y > heightLimit - this.radius) ? (this.position.y = heightLimit - this.radius) : 
         (this.position.y < this.radius - 1) ? (this.position.y = this.radius) : null ;
 
@@ -203,7 +198,6 @@ class Healthy extends Molecules {
         this.attribute = "healthy";
         this.fillColor = color(150, 255, 67);
         this.currentColor = this.fillColor;
-        this.mask = obj.maskProtection;
     }
 }
 
@@ -211,13 +205,13 @@ class Infected extends Molecules {
     constructor(_i, posX, posY, volX, volY, radius){
         super({_i, posX, posY, volX, volY, radius});
         this.attribute = "infected";
-        this.fillColor = color(255, 30, 30);
+        this.fillColor = color(175, 0, 0);
+        this.infectiousColor = color(255, 0, 0);
         this.currentColor = this.fillColor;
         this.frames = 0;
         this.daysOfInfection = 0;
         this.reproductionNumber = 0;
-        this.mask = obj.maskProtection;
-    }    
+    }
 }
 
 class Immuned extends Molecules {
