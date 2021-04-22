@@ -11,7 +11,7 @@ let obj = {
     minMoleculeSize: 9,
     maxMoleculeSize: 12,
     reproductiveRate: 0.5,
-    counterMeasure: 0.5,
+    counterMeasure: 0.1,
     maskProtection: 0.10,
     virusLifespan: 17,
     endIncumbation: 180,

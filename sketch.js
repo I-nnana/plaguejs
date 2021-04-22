@@ -323,7 +323,7 @@ function drawDashboard() {
 
     text(`Days passed: ${daysCounter}`, 50, heightLimit + 50);
     text(`Reproductive rate: ${obj.reproductiveRate * 100}% `, 50, heightLimit + 75);
-    text(`Counter measures threshold: ${obj.counterMeasure * 100}% `, 50, heightLimit + 100);
+    text(`Counter measures: ${obj.counterMeasure * 100}% `, 50, heightLimit + 100);
     text(`Mask protection: ${obj.maskProtection * 100}% `, 50, heightLimit + 125);
     text(`Virus lifespan: ${obj.virusLifespan} days`, 50, heightLimit + 150);
     text(`Days of incubation: ${obj.endIncumbation / 60} days`, 50, heightLimit + 175);

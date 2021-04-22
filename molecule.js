@@ -34,6 +34,11 @@ class Molecules {
         let collision;
 
         (gap <= 0) ? collision = true : false;
+        
+        // if (gap >= 2 && gap <=8 && infectionShare) {
+        //     let randomizer = Math.floor(Math.random() * 1000);
+        //     (randomizer < 20) ? this.socialDistancing(_molecule, distance) : null;
+        // }
 
         if (collision){
             this.repulse(_molecule);
@@ -42,41 +47,8 @@ class Molecules {
         return collision;
     }
 
+    socialDistancing(_molecule, _distance){
 
-    bounce(_molecule, _distance){
-        // if (this.daysOfInfection >= 5 && infectionShare){
-
-            // console.log(_molecule.position.x)
-            // console.log(_molecule.position.y)
-
-            // let v1 = _molecule.velocity.x * -1
-            // let v2 = _molecule.velocity.y * -1
-            
-            // _molecule.position.x += v1;
-            // _molecule.position.y +=  v2;
-
-            // console.log(_molecule.position.x)
-            // console.log(_molecule.position.y)
-
-            // noLoop()
-   
-        // } else if (_molecule.daysOfInfection >= 5 && infectionShare){
-
-            // console.log(_molecule.position.x)
-            // console.log(_molecule.position.y)
-
-            // let v1 = this.velocity.x * -1
-            // let v2 = this.velocity.y * -1
-
-            // this.position.x += v1;
-            // this.position.y +=  v2;
-
-            // console.log(_molecule.position.x)
-            // console.log(_molecule.position.y)
-
-            // noLoop()
- 
-        // } else {
             // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
             let dx = this.position.x - _molecule.position.x;
             let dy = this.position.y - _molecule.position.y;
@@ -102,7 +74,115 @@ class Molecules {
 
             _molecule.velocity.x += constrainX;
             _molecule.velocity.y += constrainY;
-        // }
+
+    }
+
+    bounce(_molecule, _distance){
+        if (this.daysOfInfection >= 5 && infectionShare){
+
+            let id = _molecule.index;
+            // console.log(id);
+            let vX = _molecule.velocity.x;
+            let vY = _molecule.velocity.y;
+            // console.log(`X: ${vX}, Y: ${vY}`);
+
+            let vx2 = vX * -1;
+            let vy2 = vY * -1;
+            // console.log(`vx2: ${vx2}, vy2: ${vy2}`);
+
+            // console.log(`x: ${_molecule.position.x}, y: ${_molecule.position.y}`);
+            let oldPosX = _molecule.position.x + vx2;
+            let oldPosY = _molecule.position.y + vy2;            
+            // console.log(`x: ${ oldPosX }, y: ${ oldPosY }`);
+
+            let oldPosition = createVector(oldPosX, oldPosY);
+            let resultantV = p5.Vector.sub(this.position, oldPosition);
+            let ang = (resultantV.heading()) * 180 / Math.PI;
+
+            // console.log(ang+"°");
+            // console.log(180 - ang+"°");
+            // console.log(Math.cos(ang));
+            // console.log(Math.sin(ang));
+
+            _molecule.velocity.x = Math.cos(ang);
+            _molecule.velocity.y = Math.sin(ang);
+
+            // let i = vX + oldPosX;
+            // let j = vY + oldPosY;
+
+            // let ang2 = Math.atan(j / i) * 180 / Math.PI;
+            // console.log(ang2+"°");
+
+            // let 
+
+            // noLoop()
+   
+        } else if (_molecule.daysOfInfection >= 5 && infectionShare){
+
+            let id = this.index;
+            // console.log(id);
+            let vX = this.velocity.x;
+            let vY = this.velocity.y;
+            // console.log(`X: ${vX}, Y: ${vY}`);
+
+            let vx2 = vX * -1;
+            let vy2 = vY * -1;
+            // console.log(`vx2: ${vx2}, vy2: ${vy2}`);
+
+            // console.log(`x: ${this.position.x}, y: ${this.position.y}`);
+            let oldPosX = this.position.x + vx2;
+            let oldPosY = this.position.y + vy2;            
+            // console.log(`x: ${ oldPosX }, y: ${ oldPosY }`);
+
+            let oldPosition = createVector(oldPosX, oldPosY);
+            let resultantV = p5.Vector.sub(this.position, oldPosition);
+            let ang = (resultantV.heading()) *180 / Math.PI;
+
+            // console.log(ang+"°");
+            // console.log(180 - ang+"°");
+            // console.log(Math.cos(ang));
+            // console.log(Math.sin(ang));
+
+            this.velocity.x = Math.cos(ang);
+            this.velocity.y = Math.sin(ang);
+
+            // let i = vX + oldPosX;
+            // let j = vY + oldPosY;
+
+            // let ang2 = Math.atan(j / i) * 180 / Math.PI;
+            // console.log(ang2+"°");
+
+            // let 
+
+            // noLoop()
+ 
+        } else {
+            // dx & dy derivate  are equal to the difference of our molecules x & y coordinates
+            let dx = this.position.x - _molecule.position.x;
+            let dy = this.position.y - _molecule.position.y;
+
+            // normalX & normalY are equal to theirs respective derivates divided by the distance
+            let normalX = dx / _distance;
+            let normalY = dy / _distance;
+
+            // dVector is the vector which determine how the molecules will move appropiately on  x & y axis
+            let dVector = (this.velocity.x - _molecule.velocity.x) * normalX;
+            dVector += (this.velocity.y - _molecule.velocity.y) * normalY;
+
+            // the molecules velocity is then  determined by the product of dVector by normalX & normalY
+            let dvx = dVector * normalX;
+            let dvy = dVector * normalY;
+
+            // constrain limits the velocities between -1 & 1
+            let constrainX = constrain(dvx, -1, 1);
+            let constrainY = constrain(dvy, -1, 1);
+
+            this.velocity.x -= constrainX;
+            this.velocity.y -= constrainY;
+
+            _molecule.velocity.x += constrainX;
+            _molecule.velocity.y += constrainY;
+        }
             
     }
 
@@ -115,6 +195,8 @@ class Molecules {
 
         // we save the magnitude (length) of the vector resultant
         let vHeading = resultant.heading();
+        // console.log(vHeading * 180/Math.PI)
+        // noLoop()
 
         // vDistance is equal to the distance between two vector, if the vector is inferior to 0, then our molecules are overlapping
         let vDistance = (resultant.mag() - this.radius - _molecule.radius) / 2;
