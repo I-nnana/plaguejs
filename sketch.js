@@ -258,6 +258,15 @@ function splitObjectIntoGrid() {
                 molecule.position.y < (j + 1) * rowHeight 
             ).map(molecule => molecule.index);
 
+            let numOfBalls = oneByOneSquare.length;
+
+            // oneByOneSquare is also used to print the number of balls present on the same cell at the same time. 
+            if(obj.gridState){
+                textSize(12);
+                fill(200, 200, 200);
+                text(numOfBalls, (i + 0.90) * colWidth,j * rowHeight  + 15);
+            } 
+
             let twoByOneSquare = molecules.filter(molecule =>
                 molecule.position.x > ((i -1) * colWidth) &&
                 molecule.position.x < ((i + 1) * colWidth) &&
